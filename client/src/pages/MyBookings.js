@@ -1,11 +1,10 @@
 import React from 'react';
-import SearchForm from '../components/SearchForm';
 
-const HomePage = () => {
+const MyBookings = () => {
     return (
         <div style={styles.container}>
-            <h2>Welcome to Train Ticket Booking</h2>
-            <SearchForm />
+            <h2>My Bookings</h2>
+            <p>You have no current bookings.</p>
         </div>
     );
 };
@@ -17,4 +16,4 @@ const styles = {
     },
 };
 
-export default HomePage;
+export default MyBookings;
