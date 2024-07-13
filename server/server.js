@@ -9,9 +9,6 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// First, make sure you've imported mongoose at the top of your file
-const mongoose = require('mongoose');
-
 // This line attempts to connect to your MongoDB database
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true })
     // If the connection is successful, this part will run
