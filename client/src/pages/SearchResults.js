@@ -1,52 +1,52 @@
-import { searchTrains } from '../services/api';
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { searchTrains } from '../services/api';
 
 const SearchResults = () => {
     const [trains, setTrains] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const location = useLocation();
     const { from, to, date } = location.state || {};
 
-    // In your useEffect:
     useEffect(() => {
-        const fetchTrains = async () => {
-            const trainData = await searchTrains(from, to, date);
-            setTrains(trainData);
+        const fetchSearchResults = async () => {
+            try {
+                setLoading(true);
+                const results = await searchTrains(from, to, date);
+                setTrains(results);
+                setError(null);
+            } catch (err) {
+                setError('Failed to fetch train results. Please try again later.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
-        fetchTrains();
+
+        fetchSearchResults();
     }, [from, to, date]);
 
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+
     return (
-        <div style={styles.container}>
+        <div>
             <h2>Search Results</h2>
-            <p>Showing trains from {from} to {to} on {date}</p>
-            {trains.map(train => (
-                <div key={train.id} style={styles.trainItem}>
-                    <h3>{train.name}</h3>
-                    <p>Departure: {train.departure} - Arrival: {train.arrival}</p>
-                    <button style={styles.bookButton}>Book Now</button>
-                </div>
-            ))}
+            {trains.length === 0 ? (
+                <p>No trains found for your search criteria.</p>
+            ) : (
+                trains.map(train => (
+                    <div key={train.id}>
+                        <h3>{train.name}</h3>
+                        <p>From: {train.from} To: {train.to}</p>
+                        <p>Departure: {train.departureTime}</p>
+                        {/* Add more train details as needed */}
+                    </div>
+                ))
+            )}
         </div>
     );
-};
-
-const styles = {
-    container: {
-        padding: '2rem',
-    },
-    trainItem: {
-        border: '1px solid #ddd',
-        padding: '1rem',
-        margin: '1rem 0',
-    },
-    bookButton: {
-        backgroundColor: '#4a90e2',
-        color: 'white',
-        border: 'none',
-        padding: '0.5rem 1rem',
-        cursor: 'pointer',
-    },
 };
 
 export default SearchResults;
