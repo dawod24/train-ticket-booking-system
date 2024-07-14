@@ -1,3 +1,4 @@
+// src/components/SearchForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,9 +8,9 @@ const SearchForm = () => {
     const [date, setDate] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        navigate('/search', { state: { from, to, date } });
+        navigate(`/search-results?from=${from}&to=${to}&date=${date}`);
     };
 
     return (
@@ -50,16 +51,16 @@ const styles = {
         margin: '0 auto',
     },
     input: {
-        margin: '0.5rem 0',
-        padding: '0.5rem',
-        fontSize: '1rem',
+        margin: '10px 0',
+        padding: '10px',
+        fontSize: '16px',
     },
     button: {
-        backgroundColor: '#4a90e2',
+        backgroundColor: '#4CAF50',
         color: 'white',
+        padding: '10px',
+        fontSize: '16px',
         border: 'none',
-        padding: '0.5rem',
-        fontSize: '1rem',
         cursor: 'pointer',
     },
 };

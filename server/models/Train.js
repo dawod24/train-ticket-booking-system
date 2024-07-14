@@ -6,7 +6,7 @@ const TrainSchema = new mongoose.Schema({
     to: { type: String, required: true },
     departureTime: { type: Date, required: true },
     arrivalTime: { type: Date, required: true },
-    seats: { type: Number, required: true },
+    availableSeats: { type: Number, required: true }
 });
 
 module.exports = mongoose.model('Train', TrainSchema);

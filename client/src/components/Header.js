@@ -1,15 +1,32 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
+    const navigate = useNavigate();
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/');
+    };
+
     return (
         <header style={styles.header}>
             <h1>Train Ticket Booking System</h1>
             <nav>
                 <ul style={styles.navList}>
                     <li><Link to="/" style={styles.navItem}>Home</Link></li>
-                    <li><Link to="/search" style={styles.navItem}>Search Trains</Link></li>
-                    <li><Link to="/bookings" style={styles.navItem}>My Bookings</Link></li>
+                    {isAuthenticated ? (
+                        <>
+                            <li><Link to="/my-bookings" style={styles.navItem}>My Bookings</Link></li>
+                            <li><button onClick={handleLogout} style={styles.logoutButton}>Logout</button></li>
+                        </>
+                    ) : (
+                        <>
+                            <li><Link to="/login" style={styles.navItem}>Login</Link></li>
+                            <li><Link to="/register" style={styles.navItem}>Register</Link></li>
+                        </>
+                    )}
                 </ul>
             </nav>
         </header>
@@ -33,6 +50,13 @@ const styles = {
         color: 'white',
         textDecoration: 'none',
         margin: '0 1rem',
+    },
+    logoutButton: {
+        background: 'none',
+        border: 'none',
+        color: 'white',
+        cursor: 'pointer',
+        fontSize: '1rem',
     },
 };
 
