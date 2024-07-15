@@ -49,4 +49,36 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
+
+// Add this new route to your existing bookings.js file
+
+// Cancel a booking
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const booking = await Booking.findById(req.params.id);
+
+        if (!booking) {
+            return res.status(404).json({ msg: 'Booking not found' });
+        }
+
+        // Check if the booking belongs to the user
+        if (booking.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        // Update train's available seats
+        const train = await Train.findById(booking.train);
+        train.availableSeats += booking.seats;
+        await train.save();
+
+        // Remove the booking
+        await booking.remove();
+
+        res.json({ msg: 'Booking cancelled successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
