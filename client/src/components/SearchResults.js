@@ -1,9 +1,14 @@
 // src/components/SearchResults.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const SearchResults = ({ trains, onBookNow }) => {
     const navigate = useNavigate();
+    const [selectedSeats, setSelectedSeats] = useState({});
+
+    const handleSeatChange = (trainId, seats) => {
+        setSelectedSeats({ ...selectedSeats, [trainId]: seats });
+    };
 
     const handleBookNow = async (train) => {
         const token = localStorage.getItem('token');
@@ -12,6 +17,8 @@ const SearchResults = ({ trains, onBookNow }) => {
             return;
         }
 
+        const seats = selectedSeats[train._id] || 1;
+
         try {
             const response = await fetch('http://localhost:5000/api/bookings', {
                 method: 'POST',
@@ -19,7 +26,7 @@ const SearchResults = ({ trains, onBookNow }) => {
                     'Content-Type': 'application/json',
                     'x-auth-token': token
                 },
-                body: JSON.stringify({ trainId: train._id, seats: 1 }) // Assuming booking 1 seat for simplicity
+                body: JSON.stringify({ trainId: train._id, seats })
             });
 
             if (!response.ok) {
@@ -48,6 +55,18 @@ const SearchResults = ({ trains, onBookNow }) => {
                         <p>Departure: {new Date(train.departureTime).toLocaleString()}</p>
                         <p>Arrival: {new Date(train.arrivalTime).toLocaleString()}</p>
                         <p>Available Seats: {train.availableSeats}</p>
+                        <div>
+                            <label htmlFor={`seats-${train._id}`}>Number of seats: </label>
+                            <input
+                                type="number"
+                                id={`seats-${train._id}`}
+                                min="1"
+                                max={train.availableSeats}
+                                value={selectedSeats[train._id] || 1}
+                                onChange={(e) => handleSeatChange(train._id, parseInt(e.target.value))}
+                                style={styles.seatInput}
+                            />
+                        </div>
                         <button
                             style={styles.bookButton}
                             onClick={() => handleBookNow(train)}
@@ -62,6 +81,7 @@ const SearchResults = ({ trains, onBookNow }) => {
 };
 
 const styles = {
+    // ... existing styles ...
     container: {
         maxWidth: '600px',
         margin: '0 auto',
@@ -80,6 +100,10 @@ const styles = {
         border: 'none',
         borderRadius: '4px',
         cursor: 'pointer',
+    },
+    seatInput: {
+        width: '50px',
+        marginRight: '10px',
     },
 };
 

@@ -75,6 +75,7 @@ const MyBookings = () => {
 };
 
 const styles = {
+    // ... existing styles ...
     container: {
         maxWidth: '600px',
         margin: '0 auto',

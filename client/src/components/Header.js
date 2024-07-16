@@ -4,9 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 const Header = () => {
     const navigate = useNavigate();
     const isAuthenticated = !!localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    const isAdmin = user && user.isAdmin;
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/');
     };
 
@@ -19,6 +22,7 @@ const Header = () => {
                     {isAuthenticated ? (
                         <>
                             <li><Link to="/my-bookings" style={styles.navItem}>My Bookings</Link></li>
+                            {isAdmin && <li><Link to="/admin" style={styles.navItem}>Admin Panel</Link></li>}
                             <li><button onClick={handleLogout} style={styles.logoutButton}>Logout</button></li>
                         </>
                     ) : (
@@ -33,6 +37,7 @@ const Header = () => {
     );
 };
 
+// ... styles remain the same
 const styles = {
     header: {
         backgroundColor: '#4a90e2',

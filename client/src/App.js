@@ -5,8 +5,9 @@ import HomePage from './pages/HomePage';
 import SearchResultsPage from './pages/SearchResults';
 import Register from './components/Register';
 import Login from './components/Login';
+import MyBookings from './pages/MyBookings';
+import AdminPanel from './components/AdminPanel';
 import ProtectedRoute from './components/ProtectedRoute';
-import MyBookings from './pages/MyBookings'; // We'll create this next
 
 function App() {
     return (
@@ -23,6 +24,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <MyBookings />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute>
+                                <AdminPanel />
                             </ProtectedRoute>
                         }
                     />
