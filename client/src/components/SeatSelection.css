@@ -1,0 +1,25 @@
+.seat-selection {
+    margin: 20px 0;
+}
+
+.seat-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.seat {
+    padding: 10px;
+    border: 1px solid #ddd;
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.seat.booked {
+    background-color: #ff9999;
+    cursor: not-allowed;
+}
+
+.seat.selected {
+    background-color: #99ff99;
+}

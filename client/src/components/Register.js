@@ -1,59 +1,88 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        password: '',
-        password2: ''
-    });
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const { register } = useAuth();
     const navigate = useNavigate();
 
-    const { username, email, password, password2 } = formData;
-
-    const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const onSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (password !== password2) {
-            setError('Passwords do not match');
-        } else {
-            try {
-                const res = await fetch('http://localhost:5000/api/auth/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, email, password })
-                });
-                const data = await res.json();
-                if (res.ok) {
-                    localStorage.setItem('token', data.token);
-                    navigate('/');
-                } else {
-                    setError(data.message);
-                }
-            } catch (err) {
-                setError('Server error');
-            }
+        setError('');
+        try {
+            await register(username, email, password);
+            navigate('/login');
+        } catch (err) {
+            setError('Failed to create an account. Please try again.');
         }
     };
 
     return (
-        <div>
+        <div style={styles.container}>
             <h2>Register</h2>
-            <form onSubmit={onSubmit}>
-                <input type="text" placeholder="Username" name="username" value={username} onChange={onChange} required />
-                <input type="email" placeholder="Email Address" name="email" value={email} onChange={onChange} required />
-                <input type="password" placeholder="Password" name="password" value={password} onChange={onChange} minLength="6" required />
-                <input type="password" placeholder="Confirm Password" name="password2" value={password2} onChange={onChange} minLength="6" required />
-                <button type="submit">Register</button>
+            {error && <p style={styles.error}>{error}</p>}
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <input
+                    type="text"
+                    placeholder="Username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    style={styles.input}
+                />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    style={styles.input}
+                />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    style={styles.input}
+                />
+                <button type="submit" style={styles.button}>Register</button>
             </form>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
     );
+};
+
+const styles = {
+    container: {
+        maxWidth: '300px',
+        margin: '0 auto',
+        padding: '20px',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+    },
+    input: {
+        margin: '10px 0',
+        padding: '10px',
+        fontSize: '16px',
+    },
+    button: {
+        backgroundColor: '#4CAF50',
+        color: 'white',
+        padding: '10px',
+        fontSize: '16px',
+        border: 'none',
+        cursor: 'pointer',
+    },
+    error: {
+        color: 'red',
+        marginBottom: '10px',
+    },
 };
 
 export default Register;

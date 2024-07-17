@@ -1,6 +1,13 @@
-module.exports = function (req, res, next) {
-    if (req.user.role !== 'admin' && req.user.role !== 'super_admin') {
-        return res.status(403).json({ msg: 'Access denied. Admin privileges required.' });
+const User = require('../models/User');
+
+module.exports = async function (req, res, next) {
+    try {
+        const user = await User.findById(req.user.id);
+        if (user.role !== 'admin') {
+            return res.status(403).json({ message: 'Access denied. Admin only.' });
+        }
+        next();
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
-    next();
 };

@@ -1,55 +1,38 @@
-// src/components/BookingForm.js
 import React, { useState } from 'react';
+import axios from 'axios';
+import SeatSelection from './SeatSelection';
 
-const BookingForm = ({ train, onBookingComplete }) => {
-    const [seats, setSeats] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+const BookingForm = ({ trainId }) => {
+    const [selectedSeats, setSelectedSeats] = useState([]);
+    const [bookingConfirmed, setBookingConfirmed] = useState(false);
+
+    const handleSeatSelect = (seats) => {
+        setSelectedSeats(seats);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setError(null);
-
         try {
-            const response = await fetch('http://localhost:5000/api/trains/book', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ trainId: train._id, seats }),
+            await axios.post('/api/bookings', {
+                trainId,
+                seats: selectedSeats
             });
-
-            if (!response.ok) {
-                throw new Error('Booking failed');
-            }
-
-            const result = await response.json();
-            onBookingComplete(result);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            setBookingConfirmed(true);
+        } catch (error) {
+            console.error('Error creating booking:', error);
         }
     };
 
+    if (bookingConfirmed) {
+        return <div>Booking confirmed! Your seats: {selectedSeats.join(', ')}</div>;
+    }
+
     return (
-        <form onSubmit={handleSubmit} style={styles.form}>
-            <label style={styles.label}>
-                Number of seats:
-                <input
-                    type="number"
-                    min="1"
-                    max={train.availableSeats}
-                    value={seats}
-                    onChange={(e) => setSeats(parseInt(e.target.value))}
-                    style={styles.input}
-                />
-            </label>
-            <button type="submit" disabled={loading} style={styles.button}>
-                {loading ? 'Booking...' : 'Confirm Booking'}
+        <form onSubmit={handleSubmit}>
+            <SeatSelection trainId={trainId} onSeatSelect={handleSeatSelect} />
+            <button type="submit" disabled={selectedSeats.length === 0}>
+                Confirm Booking
             </button>
-            {error && <p style={styles.error}>{error}</p>}
         </form>
     );
 };

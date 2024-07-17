@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const admin = require('../middleware/admin');
 const Train = require('../models/Train');
+const Booking = require('../models/Booking');
 
 // Get all trains (admin only)
 router.get('/trains', [auth, admin], async (req, res) => {
@@ -12,6 +13,15 @@ router.get('/trains', [auth, admin], async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
+    }
+});
+
+router.get('/bookings', [auth, admin], async (req, res) => {
+    try {
+        const bookings = await Booking.find().populate('user', 'username').populate('train', 'name');
+        res.json(bookings);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
     }
 });
 

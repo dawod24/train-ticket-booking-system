@@ -9,6 +9,7 @@ const userRoutes = require('./routes/users');
 const userManagementRoutes = require('./routes/userManagement');
 const notificationRoutes = require('./routes/notifications');
 const trainRoutes = require('./routes/trains');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/users', userManagementRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/trains', trainRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Root route for testing
 app.get('/', (req, res) => {

@@ -40,8 +40,6 @@ router.get('/test', (req, res) => {
     res.json({ message: 'Train routes are working' });
 });
 
-module.exports = router;
-
 // GET /api/trains
 router.get('/', async (req, res) => {
     try {
@@ -77,3 +75,17 @@ router.post('/book', async (req, res) => {
         res.status(500).json({ message: 'Error booking train', error: error.message });
     }
 });
+
+router.get('/:id/seats', async (req, res) => {
+    try {
+        const train = await Train.findById(req.params.id);
+        if (!train) {
+            return res.status(404).json({ message: 'Train not found' });
+        }
+        res.json(train.seats);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+module.exports = router;

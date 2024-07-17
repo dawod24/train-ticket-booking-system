@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const SeatSchema = new mongoose.Schema({
-    number: { type: String, required: true },
+    number: String,
     isBooked: { type: Boolean, default: false }
 });
 

@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const SeatSelection = () => {
     const [train, setTrain] = useState(null);
     const [selectedSeats, setSelectedSeats] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const { trainId } = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTrain = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/api/trains/${trainId}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch train data');
-                }
-                const data = await response.json();
-                setTrain(data);
-            } catch (error) {
-                console.error('Error fetching train:', error);
+                const response = await axios.get(`/api/trains/${trainId}`);
+                setTrain(response.data);
+            } catch (err) {
+                setError('Failed to fetch train details');
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -36,11 +37,13 @@ const SeatSelection = () => {
         navigate('/booking-confirmation', { state: { trainId, selectedSeats } });
     };
 
-    if (!train) return <div>Loading...</div>;
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>{error}</div>;
+    if (!train) return <div>No train details found</div>;
 
     return (
         <div style={styles.container}>
-            <h2>Select Seats for {train.name}</h2>
+            <h2>{train.name} - Seat Selection</h2>
             <p>From: {train.from} To: {train.to}</p>
             <p>Departure: {new Date(train.departureTime).toLocaleString()}</p>
             <div style={styles.seatMap}>
@@ -73,23 +76,24 @@ const styles = {
     },
     seatMap: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(4, 1fr)',
+        gridTemplateColumns: 'repeat(6, 1fr)',
         gap: '10px',
         margin: '20px 0',
     },
     seat: {
         padding: '10px',
-        border: '1px solid black',
+        fontSize: '14px',
+        border: '1px solid #ddd',
         cursor: 'pointer',
     },
     confirmButton: {
         backgroundColor: '#4CAF50',
         color: 'white',
-        padding: '10px 15px',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
+        padding: '10px 20px',
         fontSize: '16px',
+        border: 'none',
+        cursor: 'pointer',
+        marginTop: '20px',
     },
 };
 

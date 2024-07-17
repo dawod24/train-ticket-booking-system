@@ -1,11 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const SearchResults = ({ trains, loading, error }) => {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
     const handleSelectTrain = (train) => {
-        navigate(`/seat-selection/${train._id}`);
+        if (user) {
+            navigate(`/seat-selection/${train._id}`);
+        } else {
+            navigate('/login', { state: { from: `/seat-selection/${train._id}` } });
+        }
     };
 
     if (loading) {

@@ -1,43 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const BookingConfirmation = () => {
     const [booking, setBooking] = useState(null);
-    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const location = useLocation();
     const navigate = useNavigate();
     const { trainId, selectedSeats } = location.state || {};
 
     useEffect(() => {
         const confirmBooking = async () => {
+            if (!trainId || !selectedSeats) {
+                setError('Booking information is missing');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const response = await fetch('http://localhost:5000/api/bookings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ trainId, seats: selectedSeats })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Booking failed');
-                }
-
-                const data = await response.json();
-                setBooking(data);
+                const response = await axios.post('/api/bookings', { trainId, seats: selectedSeats });
+                setBooking(response.data);
             } catch (err) {
-                setError(err.message);
+                setError('Failed to confirm booking. Please try again.');
+            } finally {
+                setLoading(false);
             }
         };
 
-        if (trainId && selectedSeats) {
-            confirmBooking();
-        }
+        confirmBooking();
     }, [trainId, selectedSeats]);
 
-    if (error) return <div style={styles.error}>Error: {error}</div>;
-    if (!booking) return <div>Processing your booking...</div>;
+    if (loading) return <div>Processing your booking...</div>;
+    if (error) return <div>{error}</div>;
+    if (!booking) return <div>No booking information available</div>;
 
     return (
         <div style={styles.container}>
@@ -46,7 +42,7 @@ const BookingConfirmation = () => {
             <p>From: {booking.train.from} To: {booking.train.to}</p>
             <p>Departure: {new Date(booking.train.departureTime).toLocaleString()}</p>
             <p>Seats: {booking.seats.join(', ')}</p>
-            <button onClick={() => navigate('/my-bookings')} style={styles.button}>
+            <button onClick={() => navigate('/dashboard')} style={styles.button}>
                 View My Bookings
             </button>
         </div>
@@ -59,18 +55,14 @@ const styles = {
         margin: '0 auto',
         padding: '20px',
     },
-    error: {
-        color: 'red',
-        textAlign: 'center',
-    },
     button: {
         backgroundColor: '#4CAF50',
         color: 'white',
-        padding: '10px 15px',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
+        padding: '10px 20px',
         fontSize: '16px',
+        border: 'none',
+        cursor: 'pointer',
+        marginTop: '20px',
     },
 };
 
