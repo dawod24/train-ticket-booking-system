@@ -46,32 +46,4 @@ const AdminDashboard = () => {
     );
 };
 
-const styles = {
-    container: {
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '20px',
-    },
-    trainCard: {
-        border: '1px solid #ddd',
-        borderRadius: '8px',
-        padding: '15px',
-        marginBottom: '15px',
-        backgroundColor: '#f9f9f9',
-    },
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '10px',
-    },
-    submitButton: {
-        backgroundColor: '#4CAF50',
-        color: 'white',
-        border: 'none',
-        padding: '10px 15px',
-        borderRadius: '4px',
-        cursor: 'pointer',
-    },
-};
-
 export default AdminDashboard;
