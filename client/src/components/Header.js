@@ -5,7 +5,6 @@ const Header = () => {
     const navigate = useNavigate();
     const isAuthenticated = !!localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
-    const isAdmin = user && user.isAdmin;
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -22,7 +21,8 @@ const Header = () => {
                     {isAuthenticated ? (
                         <>
                             <li><Link to="/my-bookings" style={styles.navItem}>My Bookings</Link></li>
-                            {isAdmin && <li><Link to="/admin" style={styles.navItem}>Admin Panel</Link></li>}
+                            <li><Link to="/profile" style={styles.navItem}>Profile</Link></li>
+                            {user && user.isAdmin && <li><Link to="/admin" style={styles.navItem}>Admin Panel</Link></li>}
                             <li><button onClick={handleLogout} style={styles.logoutButton}>Logout</button></li>
                         </>
                     ) : (

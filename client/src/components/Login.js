@@ -1,33 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// ... existing imports and component structure
-
-const onSubmit = async e => {
-    e.preventDefault();
-    try {
-        const res = await fetch('http://localhost:5000/api/auth/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
-            navigate('/');
-        } else {
-            setError(data.message);
-        }
-    } catch (err) {
-        setError('Server error');
-    }
-};
-
-// ... rest of the component
-
 const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
@@ -53,6 +26,7 @@ const Login = () => {
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
                 navigate('/');
             } else {
                 setError(data.message);

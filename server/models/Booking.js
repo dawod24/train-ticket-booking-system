@@ -11,10 +11,10 @@ const BookingSchema = new mongoose.Schema({
         ref: 'Train',
         required: true
     },
-    seats: {
-        type: Number,
+    seats: [{
+        type: String,
         required: true
-    },
+    }],
     bookingDate: {
         type: Date,
         default: Date.now

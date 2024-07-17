@@ -7,6 +7,9 @@ import Register from './components/Register';
 import Login from './components/Login';
 import MyBookings from './pages/MyBookings';
 import AdminPanel from './components/AdminPanel';
+import UserProfile from './components/UserProfile';
+import SeatSelection from './components/SeatSelection';
+import BookingConfirmation from './components/BookingConfirmation';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -19,22 +22,11 @@ function App() {
                     <Route path="/search-results" element={<SearchResultsPage />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/login" element={<Login />} />
-                    <Route
-                        path="/my-bookings"
-                        element={
-                            <ProtectedRoute>
-                                <MyBookings />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute>
-                                <AdminPanel />
-                            </ProtectedRoute>
-                        }
-                    />
+                    <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+                    <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+                    <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+                    <Route path="/seat-selection/:trainId" element={<ProtectedRoute><SeatSelection /></ProtectedRoute>} />
+                    <Route path="/booking-confirmation" element={<ProtectedRoute><BookingConfirmation /></ProtectedRoute>} />
                 </Routes>
             </div>
         </Router>

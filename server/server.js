@@ -4,6 +4,7 @@ const cors = require('cors');
 // ... existing imports
 const authRoutes = require('./routes/auth');
 const bookingsRoutes = require('./routes/bookings');
+const userRoutes = require('./routes/users');
 
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 // ... existing middleware
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingsRoutes);
+app.use('/api/users', userRoutes);
 
 // ... rest of your server.js code
 

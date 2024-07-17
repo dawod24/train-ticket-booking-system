@@ -20,13 +20,19 @@ router.post('/', auth, async (req, res) => {
     try {
         const { trainId, seats } = req.body;
 
-        // Check if train exists and has enough seats
+        // Check if train exists
         const train = await Train.findById(trainId);
         if (!train) {
             return res.status(404).json({ msg: 'Train not found' });
         }
-        if (train.availableSeats < seats) {
-            return res.status(400).json({ msg: 'Not enough seats available' });
+
+        // Check if seats are available
+        const unavailableSeats = seats.filter(seatNumber =>
+            train.seats.find(s => s.number === seatNumber && s.isBooked)
+        );
+
+        if (unavailableSeats.length > 0) {
+            return res.status(400).json({ msg: `Seats ${unavailableSeats.join(', ')} are not available` });
         }
 
         // Create booking
@@ -36,13 +42,19 @@ router.post('/', auth, async (req, res) => {
             seats: seats
         });
 
-        // Update train's available seats
-        train.availableSeats -= seats;
-        await train.save();
+        // Update train's seat availability
+        train.seats.forEach(seat => {
+            if (seats.includes(seat.number)) {
+                seat.isBooked = true;
+            }
+        });
 
+        await train.save();
         await newBooking.save();
 
-        res.json(newBooking);
+        const populatedBooking = await Booking.findById(newBooking._id).populate('train');
+
+        res.json(populatedBooking);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
