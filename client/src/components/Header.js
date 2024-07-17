@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
     const navigate = useNavigate();
-    const isAuthenticated = !!localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
 
     const handleLogout = () => {
@@ -18,11 +17,15 @@ const Header = () => {
             <nav>
                 <ul style={styles.navList}>
                     <li><Link to="/" style={styles.navItem}>Home</Link></li>
-                    {isAuthenticated ? (
+                    {user ? (
                         <>
-                            <li><Link to="/my-bookings" style={styles.navItem}>My Bookings</Link></li>
-                            <li><Link to="/profile" style={styles.navItem}>Profile</Link></li>
-                            {user && user.isAdmin && <li><Link to="/admin" style={styles.navItem}>Admin Panel</Link></li>}
+                            <li><Link to="/dashboard" style={styles.navItem}>My Dashboard</Link></li>
+                            {(user.role === 'admin' || user.role === 'super_admin') && (
+                                <li><Link to="/admin" style={styles.navItem}>Admin Dashboard</Link></li>
+                            )}
+                            {user.role === 'super_admin' && (
+                                <li><Link to="/super-admin" style={styles.navItem}>Super Admin Dashboard</Link></li>
+                            )}
                             <li><button onClick={handleLogout} style={styles.logoutButton}>Logout</button></li>
                         </>
                     ) : (

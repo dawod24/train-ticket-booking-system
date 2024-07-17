@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Booking = require('../models/Booking');
 const Train = require('../models/Train');
+const notificationService = require('../services/notificationService');
 
 // Get user's bookings
 router.get('/', auth, async (req, res) => {
@@ -17,6 +18,7 @@ router.get('/', auth, async (req, res) => {
 
 // Create a new booking
 router.post('/', auth, async (req, res) => {
+    // ... (keep the existing code for creating a booking)
     try {
         const { trainId, seats } = req.body;
 
@@ -52,6 +54,13 @@ router.post('/', auth, async (req, res) => {
         await train.save();
         await newBooking.save();
 
+        // Create notification
+        await notificationService.createNotification(
+            req.user.id,
+            `Your booking for ${train.name} from ${train.from} to ${train.to} has been confirmed.`,
+            'booking'
+        );
+
         const populatedBooking = await Booking.findById(newBooking._id).populate('train');
 
         res.json(populatedBooking);
@@ -60,9 +69,6 @@ router.post('/', auth, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
-
-
-// Add this new route to your existing bookings.js file
 
 // Cancel a booking
 router.delete('/:id', auth, async (req, res) => {
@@ -78,9 +84,14 @@ router.delete('/:id', auth, async (req, res) => {
             return res.status(401).json({ msg: 'User not authorized' });
         }
 
-        // Update train's available seats
+        // Update train's seat availability
         const train = await Train.findById(booking.train);
-        train.availableSeats += booking.seats;
+        booking.seats.forEach(seatNumber => {
+            const seat = train.seats.find(s => s.number === seatNumber);
+            if (seat) {
+                seat.isBooked = false;
+            }
+        });
         await train.save();
 
         // Remove the booking

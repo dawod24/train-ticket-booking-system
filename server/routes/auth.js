@@ -12,19 +12,19 @@ router.post('/register', async (req, res) => {
         // Check if user already exists
         let user = await User.findOne({ email });
         if (user) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ msg: 'User already exists' });
         }
-
-        // Hash password
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
 
         // Create new user
         user = new User({
             username,
             email,
-            password: hashedPassword
+            password
         });
+
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(password, salt);
 
         await user.save();
 
@@ -44,12 +44,11 @@ router.post('/register', async (req, res) => {
                 res.json({ token });
             }
         );
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server error');
     }
 });
-
 // ... rest of your auth.js code
 
 // Login
