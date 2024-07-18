@@ -1,3 +1,4 @@
+// server/__tests__/notificationService.test.js
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const User = require('../models/User');

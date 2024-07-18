@@ -1,3 +1,4 @@
+// server/__mocks__/nodemailer.js
 const nodemailer = jest.createMockFromModule('nodemailer');
 
 nodemailer.createTransport = jest.fn(() => ({

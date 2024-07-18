@@ -1,6 +1,8 @@
+// client/src/components/Header.js
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import styled from 'styled-components';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -12,60 +14,60 @@ const Header = () => {
     };
 
     return (
-        <header style={styles.header}>
+        <HeaderContainer>
             <h1>Train Ticket Booking System</h1>
             <nav>
-                <ul style={styles.navList}>
-                    <li><Link to="/" style={styles.navItem}>Home</Link></li>
+                <NavList>
+                    <li><NavLink to="/">Home</NavLink></li>
                     {user ? (
                         <>
-                            <li><Link to="/dashboard" style={styles.navItem}>My Dashboard</Link></li>
+                            <li><NavLink to="/dashboard">My Dashboard</NavLink></li>
                             {(user.role === 'admin' || user.role === 'super_admin') && (
-                                <li><Link to="/admin" style={styles.navItem}>Admin Dashboard</Link></li>
+                                <li><NavLink to="/admin">Admin Dashboard</NavLink></li>
                             )}
                             {user.role === 'super_admin' && (
-                                <li><Link to="/super-admin" style={styles.navItem}>Super Admin Dashboard</Link></li>
+                                <li><NavLink to="/super-admin">Super Admin Dashboard</NavLink></li>
                             )}
-                            <li><button onClick={handleLogout} style={styles.logoutButton}>Logout</button></li>
+                            <li><LogoutButton onClick={handleLogout}>Logout</LogoutButton></li>
                         </>
                     ) : (
                         <>
-                            <li><Link to="/login" style={styles.navItem}>Login</Link></li>
-                            <li><Link to="/register" style={styles.navItem}>Register</Link></li>
+                            <li><NavLink to="/login">Login</NavLink></li>
+                            <li><NavLink to="/register">Register</NavLink></li>
                         </>
                     )}
-                </ul>
+                </NavList>
             </nav>
-        </header>
+        </HeaderContainer>
     );
 };
 
-// ... styles remain the same
-const styles = {
-    header: {
-        backgroundColor: '#4a90e2',
-        color: 'white',
-        padding: '1rem',
-        textAlign: 'center',
-    },
-    navList: {
-        listStyle: 'none',
-        padding: 0,
-        display: 'flex',
-        justifyContent: 'center',
-    },
-    navItem: {
-        color: 'white',
-        textDecoration: 'none',
-        margin: '0 1rem',
-    },
-    logoutButton: {
-        background: 'none',
-        border: 'none',
-        color: 'white',
-        cursor: 'pointer',
-        fontSize: '1rem',
-    },
-};
+const HeaderContainer = styled.header`
+    background-color: #4a90e2;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+`;
+
+const NavList = styled.ul`
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+`;
+
+const NavLink = styled(Link)`
+    color: white;
+    text-decoration: none;
+    margin: 0 1rem;
+`;
+
+const LogoutButton = styled.button`
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+`;
 
 export default Header;

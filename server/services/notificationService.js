@@ -1,3 +1,4 @@
+// server/services/notificationService.js
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 const nodemailer = require('nodemailer');

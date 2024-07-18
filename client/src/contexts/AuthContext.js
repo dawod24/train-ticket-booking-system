@@ -1,8 +1,7 @@
+// client/src/contexts/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-
-// Define the base URL for your API
-const API_BASE_URL = 'http://localhost:5000/api';
+import { API_BASE_URL } from '../config';
 
 const AuthContext = createContext();
 

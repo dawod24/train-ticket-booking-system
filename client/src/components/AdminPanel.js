@@ -1,3 +1,4 @@
+// client/src/components/AdminPanel.js
 import React, { useState, useEffect } from 'react';
 
 const AdminPanel = () => {

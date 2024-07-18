@@ -1,4 +1,4 @@
-// src/components/SearchForm.js
+// client/src/components/SearchForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

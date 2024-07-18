@@ -1,3 +1,4 @@
+// client/src/components/TrainList.js
 import React from 'react';
 
 const TrainList = ({ trains }) => {

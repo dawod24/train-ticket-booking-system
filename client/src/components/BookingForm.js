@@ -1,3 +1,4 @@
+// client/src/components/BookingForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import SeatSelection from './SeatSelection';

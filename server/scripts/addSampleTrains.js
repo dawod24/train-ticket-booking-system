@@ -1,4 +1,4 @@
-// scripts/addSampleTrains.js
+// server/scripts/addSampleTrains.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 const Train = require('../models/Train');

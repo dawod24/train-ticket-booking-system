@@ -1,10 +1,15 @@
+// client/src/components/UserDashboard.js
 import React, { useState, useEffect } from 'react';
 import Notification from './Notification';
+import { API_BASE_URL } from '../config';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 
 const UserDashboard = () => {
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { user } = useAuth();
 
     useEffect(() => {
         fetchBookings();
@@ -12,18 +17,12 @@ const UserDashboard = () => {
 
     const fetchBookings = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/bookings', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+            const response = await axios.get(`${API_BASE_URL}/bookings`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
-            if (!response.ok) {
-                throw new Error('Failed to fetch bookings');
-            }
-            const data = await response.json();
-            setBookings(data);
-        } catch (err) {
-            setError(err.message);
+            setBookings(response.data);
+        } catch (error) {
+            setError('Failed to fetch bookings: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -31,19 +30,12 @@ const UserDashboard = () => {
 
     const handleCancelBooking = async (bookingId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
+            await axios.delete(`${API_BASE_URL}/bookings/${bookingId}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
             });
-            if (!response.ok) {
-                throw new Error('Failed to cancel booking');
-            }
-            // Remove the cancelled booking from the state
             setBookings(bookings.filter(booking => booking._id !== bookingId));
-        } catch (err) {
-            setError(err.message);
+        } catch (error) {
+            setError('Failed to cancel booking: ' + error.message);
         }
     };
 

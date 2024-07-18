@@ -1,3 +1,4 @@
+// client/src/components/SearchResults.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';

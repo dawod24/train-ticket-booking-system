@@ -1,3 +1,4 @@
+// client/src/pages/SearchResults.js
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import SearchResults from '../components/SearchResults';

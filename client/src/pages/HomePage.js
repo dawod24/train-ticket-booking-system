@@ -1,3 +1,4 @@
+// client/src/pages/HomePage.js
 import React from 'react';
 import SearchForm from '../components/SearchForm';
 
