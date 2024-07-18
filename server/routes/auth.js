@@ -7,17 +7,23 @@ const User = require('../models/User');
 
 // Register
 router.post('/register', async (req, res) => {
+    console.log('Registration attempt:', req.body);
     try {
         const { username, email, password } = req.body;
 
+        // Validate input
+        if (!username || !email || !password) {
+            return res.status(400).json({ msg: 'Please enter all fields' });
+        }
+
         // Check if user already exists
-        let user = await User.findOne({ email });
-        if (user) {
-            return res.status(400).json({ msg: 'User already exists' });
+        let existingUser = await User.findOne({ $or: [{ email }, { username }] });
+        if (existingUser) {
+            return res.status(400).json({ msg: 'User with this email or username already exists' });
         }
 
         // Create new user
-        user = new User({
+        const newUser = new User({
             username,
             email,
             password
@@ -25,14 +31,15 @@ router.post('/register', async (req, res) => {
 
         // Hash password
         const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(password, salt);
+        newUser.password = await bcrypt.hash(password, salt);
 
-        await user.save();
+        // Save the user
+        const savedUser = await newUser.save();
 
         // Create and send token
         const payload = {
             user: {
-                id: user.id
+                id: savedUser._id
             }
         };
 
@@ -41,13 +48,19 @@ router.post('/register', async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: '1h' },
             (err, token) => {
-                if (err) throw err;
+                if (err) {
+                    console.error('JWT Sign Error:', err);
+                    return res.status(500).json({ msg: 'Error generating token' });
+                }
                 res.json({ token });
             }
         );
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error('Registration error:', err);
+        if (err.code === 11000) {
+            return res.status(400).json({ msg: 'User with this email or username already exists' });
+        }
+        res.status(500).json({ msg: 'Server error', error: err.message });
     }
 });
 // ... rest of your auth.js code
@@ -67,20 +80,25 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.json({
-            token,
+        const payload = {
             user: {
-                id: user.id,
-                username: user.username,
-                email: user.email,
-                isAdmin: user.isAdmin
+                id: user.id
             }
-        });
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' },
+            (err, token) => {
+                if (err) throw err;
+                console.log('Login successful. Token created for user:', user.id);
+                res.json({ token });
+            }
+        );
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
 

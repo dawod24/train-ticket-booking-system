@@ -44,7 +44,7 @@ const UserDashboard = () => {
 
     return (
         <div style={styles.container}>
-            <h2>User Dashboard</h2>
+            <h2>Welcome, {user ? user.username : 'User'}!</h2>
             <Notification />
             {bookings.length === 0 ? (
                 <p>You have no current bookings.</p>
